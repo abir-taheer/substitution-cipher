@@ -2,7 +2,7 @@ import calcFrequency from './calcFrequency.js';
 import shiftChars from './shiftChars.js';
 import { isInDict } from './compareDict.js';
 
-async function crackShiftCipher(text) {
+export default async function crackShiftCipher(text) {
 	text = text.toLowerCase();
 	const frequencies = calcFrequency(text);
 
@@ -22,13 +22,11 @@ async function crackShiftCipher(text) {
 		const words = newText.split(new RegExp(/[^a-z]/)).filter(Boolean);
 		let numValidWords = 0;
 
-		await Promise.all(
-			words.map(async word => {
-				if (await isInDict(word)) {
-					numValidWords++;
-				}
-			})
-		);
+		words.forEach(word => {
+			if (isInDict(word)) {
+				numValidWords++;
+			}
+		});
 
 		const confidence = numValidWords / words.length;
 
@@ -54,10 +52,6 @@ async function crackShiftCipher(text) {
 
 	return {
 		match,
-		alternatives,
+		alternatives: alternatives.splice(0, 5),
 	};
 }
-
-crackShiftCipher(
-	'HVWG WG O GVCFH SBCIUV HSLH HVOH WG SBQFMDHSR KWHV O GWADZS GVWTH QWDVSF'
-).then(console.log);

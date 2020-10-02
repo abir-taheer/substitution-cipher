@@ -2,7 +2,13 @@ export const allLetters = Array(26)
 	.fill(null)
 	.map((val, index) => String.fromCharCode(97 + index));
 
+const cache = {};
+
 export default function calcFrequency(text) {
+	if (cache[text]) {
+		return cache[text];
+	}
+
 	const lowercaseText = text.toLowerCase();
 	const frequencies = {};
 	const percentages = {};
@@ -31,6 +37,7 @@ export default function calcFrequency(text) {
 		});
 	}
 
+	cache[text] = percentages;
+
 	return percentages;
 }
-
