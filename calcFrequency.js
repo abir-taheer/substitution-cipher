@@ -1,30 +1,36 @@
-const allLetters = Array(26)
+export const allLetters = Array(26)
 	.fill(null)
 	.map((val, index) => String.fromCharCode(97 + index));
 
-function calcFrequency(text) {
+export default function calcFrequency(text) {
+	const lowercaseText = text.toLowerCase();
 	const frequencies = {};
 	const percentages = {};
 
+	let numChars = 0;
+
+	// Initialize the frequency and percentages object
 	allLetters.forEach(char => {
 		frequencies[char] = 0;
+		percentages[char] = 0;
 	});
 
-	const characters = text
-		.toLowerCase()
-		.split('')
-		.filter(char => char >= 'a' && char <= 'z');
+	for (let i = 0; i < lowercaseText.length; i++) {
+		const char = lowercaseText[i];
 
-	characters.forEach(char => {
-		frequencies[char]++;
-	});
+		if (char >= 'a' && char <= 'z') {
+			numChars++;
+			frequencies[char]++;
+		}
+	}
 
-	// Doing percentage calculations at the end because floats are weird
-	allLetters.forEach(char => {
-		percentages[char] = frequencies[char] / characters.length;
-	});
+	if (numChars > 0) {
+		// Doing percentage calculations at the end because floats are weird
+		allLetters.forEach(char => {
+			percentages[char] = frequencies[char] / numChars;
+		});
+	}
 
 	return percentages;
 }
 
-module.exports = calcFrequency;

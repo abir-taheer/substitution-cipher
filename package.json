@@ -1,0 +1,11 @@
+{
+  "name": "substitution-cipher",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "binary-search": "^1.3.6",
+    "dictionary-en": "^3.0.1",
+    "esm": "^3.2.25",
+    "spellchecker": "^3.7.0"
+  }
+}
