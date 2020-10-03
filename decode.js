@@ -52,9 +52,24 @@ const file = yargs.argv._[0];
 		while (!ran || inputText) {
 			ran = true;
 			console.log(
-				'Attempting to solve with dictionary matching and frequency analysis'
+				'Attempting to solve with dictionary matching and frequency analysis\n'
 			);
-			console.log(crackComplex(string, mappings));
+			const attempt = crackComplex(string, mappings);
+
+			console.log('original text: \t' + attempt.original.red);
+			console.log('');
+			console.log('replaced text: \t' + attempt.replaced.blue);
+			console.log('');
+			console.log('estimate : \t' + attempt.estimate.green);
+			console.log('');
+			console.log(
+				'mappings: ' +
+					Object.keys(attempt.mappings)
+						.filter(char => Boolean(attempt.mappings[char].char))
+						.map(char => `${char}=${attempt.mappings[char].char}`)
+						.join(',').gray
+			);
+			console.log('');
 
 			console.log(
 				`If you notice a pattern you may enter new mappings below as well as update existing mappings.`

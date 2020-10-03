@@ -214,5 +214,6 @@ export default function crackComplex(text, initialMappings) {
 			.join(' '),
 		original: words.join(' '),
 		replaced: guess.join(' '),
+		mappings,
 	};
 }
