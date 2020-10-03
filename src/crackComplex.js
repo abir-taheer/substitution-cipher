@@ -121,7 +121,6 @@ export default function crackComplex(text) {
 
 	words.forEach(word => {
 		if (word.length === 1) {
-			console.log(word);
 			addToScore(word, 'a', 900);
 			addToScore(word, 'i', 800);
 		}
@@ -201,7 +200,7 @@ export default function crackComplex(text) {
 						similar => similar[i] === word[i]
 					);
 
-					if (smallerDict.length) {
+					if (smallerDict.length > 2) {
 						similarWords = smallerDict;
 					}
 				}
