@@ -51,7 +51,7 @@ export default async function crackShiftCipher(text) {
 	const match = alternatives.splice(0, 1)[0];
 
 	return {
-		match,
 		alternatives: alternatives.splice(0, 5),
+		match,
 	};
 }

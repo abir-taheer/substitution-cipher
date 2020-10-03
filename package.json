@@ -6,6 +6,10 @@
   },
   "dependencies": {
     "esm": "^3.2.25",
-    "string-similarity": "^4.0.2"
+    "string-similarity": "^4.0.2",
+    "yargs": "^16.0.3"
+  },
+  "devDependencies": {
+    "axios": "^0.20.0"
   }
 }

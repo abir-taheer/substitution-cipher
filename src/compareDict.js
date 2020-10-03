@@ -1,11 +1,14 @@
 import fs from 'fs';
 import stringSimilarity from 'string-similarity';
-
 export const charMap = {};
 export const lenMap = {};
 
 const dict = fs.readFileSync('dictionary.txt');
-const words = dict.toString().split('\n');
+const words = dict
+	.toString()
+	.toLowerCase()
+	.split(new RegExp(/[^a-z]/))
+	.filter(Boolean);
 
 words.forEach(word => {
 	const firstChar = word.charAt(0);
@@ -28,6 +31,10 @@ words.forEach(word => {
 // Expects word to be lowercase
 export function isInDict(word) {
 	const relevantWords = charMap[word[0]];
+
+	if (!relevantWords) {
+		return false;
+	}
 
 	for (let i = 0; i < relevantWords.length; i++) {
 		if (stringSimilarity.compareTwoStrings(word, relevantWords[i]) > 0.9) {

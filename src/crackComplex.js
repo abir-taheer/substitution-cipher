@@ -1,5 +1,6 @@
 import calcFrequency, { allLetters } from './calcFrequency';
 import { lenMap } from './compareDict';
+import stringSimilarity from 'string-similarity';
 
 const calculateFinalMappings = scores => {
 	// Make a copy so that we can freely modify
@@ -48,7 +49,7 @@ const calculateFinalMappings = scores => {
 	return mappings;
 };
 
-function rewriteWord(word, mappings) {
+function rewriteWord(word, mappings, original) {
 	let newWord = '';
 
 	for (let i = 0; i < word.length; i++) {
@@ -56,7 +57,7 @@ function rewriteWord(word, mappings) {
 		if (mappings[char] && mappings[char].char) {
 			newWord += mappings[char].char;
 		} else {
-			newWord += '?';
+			newWord += original ? char : '?';
 		}
 	}
 
@@ -88,17 +89,17 @@ export default function crackComplex(text) {
 		letterMappings[decoy][actual] += score;
 	};
 
-	addToScore(frequencyOrder[0], 'e', 150);
-	addToScore(frequencyOrder[0], 'a', 100);
-	addToScore(frequencyOrder[0], 'i', 80);
+	addToScore(frequencyOrder[0], 'e', 100);
+	addToScore(frequencyOrder[0], 'a', 80);
+	addToScore(frequencyOrder[0], 'i', 60);
 
-	addToScore(frequencyOrder[1], 'e', 100);
-	addToScore(frequencyOrder[1], 'a', 100);
-	addToScore(frequencyOrder[1], 'i', 90);
+	addToScore(frequencyOrder[1], 'e', 80);
+	addToScore(frequencyOrder[1], 'a', 90);
+	addToScore(frequencyOrder[1], 'i', 80);
 
 	addToScore(frequencyOrder[2], 'e', 70);
-	addToScore(frequencyOrder[2], 'a', 90);
-	addToScore(frequencyOrder[2], 'i', 90);
+	addToScore(frequencyOrder[2], 'a', 80);
+	addToScore(frequencyOrder[2], 'i', 80);
 
 	const getLetterPositions = word => {
 		const letterPositions = {};
@@ -119,15 +120,35 @@ export default function crackComplex(text) {
 	};
 
 	words.forEach(word => {
+		if (word.length === 1) {
+			console.log(word);
+			addToScore(word, 'a', 900);
+			addToScore(word, 'i', 800);
+		}
+
+		if (word.length === 2) {
+			addToScore(word[0], 'o', 80);
+			addToScore(word[1], 'f', 80);
+
+			addToScore(word[0], 't', 80);
+			addToScore(word[1], 'o', 60);
+
+			addToScore(word[0], 'a', 50);
+			addToScore(word[0], 'n', 50);
+
+			// addToScore(word[0], 'i', 50);
+			addToScore(word[0], 'n', 50);
+		}
+
 		// Check to see if there are consecutive same letters
 		for (let i = 0; i < word.length - 1; i++) {
 			const char = word[i];
 			if (char === word[i + 1]) {
-				addToScore(char, 'l', 150);
-				addToScore(char, 's', 120);
-				addToScore(char, 'e', 100);
-				addToScore(char, 'o', 100);
-				addToScore(char, 'p', 80);
+				addToScore(char, 'l', 10);
+				addToScore(char, 's', 8);
+				addToScore(char, 'e', 8);
+				addToScore(char, 'o', 8);
+				addToScore(char, 'p', 6);
 			}
 		}
 
@@ -151,7 +172,7 @@ export default function crackComplex(text) {
 							JSON.stringify(fakeCharPositions)
 					) {
 						// THIS IS VERY USEFUL
-						addToScore(fakeChar, possibleLetter, 15);
+						addToScore(fakeChar, possibleLetter, 1);
 					}
 				});
 			});
@@ -160,5 +181,34 @@ export default function crackComplex(text) {
 
 	const mappings = calculateFinalMappings(letterMappings);
 
-	console.log(words.map(word => rewriteWord(word, mappings)).join(' '));
+	const guess = words.map(word => rewriteWord(word, mappings));
+
+	return {
+		original: words.join(' '),
+		guess: guess.join(' '),
+		estimate: guess
+			.map(word => {
+				let similarWords = Array.from(lenMap[word.length]);
+
+				for (let i = 0; i < word.length; i++) {
+					const char = word[i];
+
+					if (char === '?') {
+						continue;
+					}
+
+					const smallerDict = similarWords.filter(
+						similar => similar[i] === word[i]
+					);
+
+					if (smallerDict.length) {
+						similarWords = smallerDict;
+					}
+				}
+
+				return stringSimilarity.findBestMatch(word, similarWords).bestMatch
+					.target;
+			})
+			.join(' '),
+	};
 }
