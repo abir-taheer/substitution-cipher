@@ -1,16 +1,22 @@
 PROJECT = "substitution-cipher"
+all: build help
 
-all: install
-
-analyze: ;@echo "Analyzing..."; \
+analyze:
+	$(info ***** ANALYZING FILE *****)
 	npm run analyze $(ARGS)
 
-decode: ;@echo "Decoding..."; \
+decode:
+	$(info ***** DECODING FILE *****)
 	npm run decode $(ARGS)
 
-install: ;@echo "Installing dependencies"; \
+build:
+	$(info ***** INSTALLING DEPENDENCIES *****)
 	npm install
-	@echo "Instructions:"
+
+help:
+	$(info ***** INSTRUCTIONS *****)
+	@echo "The first time you run the program, install dependencies by running:"
+	@echo "make build"
 	@echo ""
 	@echo "To decode a file: "
 	@echo "make decode ARGS=\"<file path (relative or absolute)>\""
@@ -18,8 +24,10 @@ install: ;@echo "Installing dependencies"; \
 	@echo "To analyze frequencies:"
 	@echo "make analyze ARGS=\"<file path (relative or absolute)>\""
 
-clean : ;
+clean:
+	$(info ***** REMOVING DEPENDENCIES *****)
 	rm -rf node_modules
 
 
 .PHONY: install analyze decode clean
+.SECONDARY: install

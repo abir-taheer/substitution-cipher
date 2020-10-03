@@ -64,7 +64,7 @@ function rewriteWord(word, mappings, original) {
 	return newWord;
 }
 
-export default function crackComplex(text) {
+export default function crackComplex(text, initialMappings) {
 	text = text.toLowerCase();
 	// Each letter has an array of possible mappings with confidence
 	const letterMappings = {};
@@ -73,6 +73,11 @@ export default function crackComplex(text) {
 
 	allLetters.forEach(char => {
 		letterMappings[char] = {};
+
+		if (initialMappings[char]) {
+			// Some absurdly high value to guarantee the match
+			letterMappings[char][initialMappings[char]] = 100000000;
+		}
 	});
 
 	const percentages = calcFrequency(text);
@@ -183,8 +188,6 @@ export default function crackComplex(text) {
 	const guess = words.map(word => rewriteWord(word, mappings));
 
 	return {
-		original: words.join(' '),
-		guess: guess.join(' '),
 		estimate: guess
 			.map(word => {
 				let similarWords = Array.from(lenMap[word.length]);
@@ -209,5 +212,7 @@ export default function crackComplex(text) {
 					.target;
 			})
 			.join(' '),
+		original: words.join(' '),
+		replaced: guess.join(' '),
 	};
 }

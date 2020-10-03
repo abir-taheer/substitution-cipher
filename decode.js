@@ -2,6 +2,8 @@ import { promises as fs } from 'fs';
 import crackShiftCipher from './src/crackShiftCipher.js';
 import crackComplex from './src/crackComplex';
 import yargs from 'yargs';
+const prompt = require('prompt-sync')();
+const colors = require('colors');
 
 const file = yargs.argv._[0];
 
@@ -18,8 +20,60 @@ const file = yargs.argv._[0];
 		return;
 	}
 
+	console.log(`We couldn't use a simple cipher to break the code.\n`);
 	console.log(
-		'Attempted to solve with dictionary matching and frequency analysis'
+		`We are going to try frequency analysis but before we begin, are there any letters you already know for certain?`
 	);
-	console.log(crackComplex(string));
+	console.log(
+		`You can enter them below in the format <encoded character>=<decoded character> like so: ` +
+			'g=t,o=l'.blue
+	);
+	console.log('');
+
+	const mappingText = prompt(
+		'Enter any mappings you are aware of (you can leave this blank): '
+	);
+
+	try {
+		let ran = false;
+
+		const mappings = {};
+
+		if (mappingText) {
+			mappingText
+				.toLowerCase()
+				.split(',')
+				.map(individual => individual.split('='))
+				.forEach(mapping => (mappings[mapping[0]] = mapping[1]));
+		}
+
+		let inputText = null;
+
+		while (!ran || inputText) {
+			ran = true;
+			console.log(
+				'Attempting to solve with dictionary matching and frequency analysis'
+			);
+			console.log(crackComplex(string, mappings));
+
+			console.log(
+				`If you notice a pattern you may enter new mappings below as well as update existing mappings.`
+			);
+
+			inputText = prompt(
+				'Else you can just leave it empty and hit enter to exit the program:'
+			);
+
+			if (inputText) {
+				inputText
+					.toLowerCase()
+					.split(',')
+					.map(individual => individual.split('='))
+					.forEach(mapping => (mappings[mapping[0]] = mapping[1]));
+			}
+		}
+	} catch (er) {
+		console.log('There was an unexpected error: ');
+		console.error(er);
+	}
 })();

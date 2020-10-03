@@ -6,11 +6,14 @@
     "analyze": "node -r esm analyze.js"
   },
   "dependencies": {
+    "colors": "^1.4.0",
     "esm": "^3.2.25",
+    "prompt-sync": "^4.2.0",
     "string-similarity": "^4.0.2",
     "yargs": "^16.0.3"
   },
   "devDependencies": {
     "axios": "^0.20.0"
-  }
+  },
+  "private": true
 }
